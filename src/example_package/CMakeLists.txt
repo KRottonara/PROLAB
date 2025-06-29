@@ -7,6 +7,10 @@ project(example_package)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+
+
+
+
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   geometry_msgs
@@ -18,6 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   tf2
+  actionlib_msgs
+  move_base_msgs
 )
 
 find_package(Eigen3 REQUIRED)
@@ -220,3 +226,7 @@ include_directories(
 add_executable(filter_node src/filter_node.cpp)
 add_dependencies(filter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(filter_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+add_executable(publish_goals src/publish_goals.cpp)
+add_dependencies(publish_goals ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(publish_goals ${catkin_LIBRARIES})

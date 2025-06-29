@@ -1,4 +1,7 @@
 <launch>
+    <rosparam file="$(find example_package)/config/goals.yaml" command="load"/>
+
+
     <include file="$(find gazebo_ros)launch/empty_world.launch">
       <arg name="world_name" value="$(find example_package)/world/playground.world" />
       <arg name="gui" value="false" />
@@ -24,9 +27,9 @@
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
   
   <!-- Map server node (publishes a static map) -->
-  <node pkg="map_server" type="map_server" name="map_server_2" args="$(find example_package)/maps/my_map.yaml" >
+  <!-- <node pkg="map_server" type="map_server" name="map_server_2" args="$(find example_package)/maps/my_map.yaml" >
     <remap from="map" to="my_custom_map"/>
-  </node>
+  </node> -->
 
   <node pkg="tf" type="static_transform_publisher" name="base_scan_to_base_link" args="0 0 0 0 0 0 base_link base_scan 100"/>
 
@@ -47,4 +50,6 @@
     <node pkg="rviz" type="rviz" name="rviz" required="true"
           args="-d $(find example_package)/config/config_with_navigation.rviz"/>
   </group>
+
+  <node pkg="example_package" type="publish_goals" name="publish_goals" launch-prefix="xterm -e"/>
 </launch>
