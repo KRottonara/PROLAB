@@ -10,8 +10,8 @@
     </include>
 
     <!-- Robot description -->
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_burger_for_autorace.urdf.xacro" /> 
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot3_burger -x 0 -y 0 -z 0 -Y 0 -param robot_description" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find example_package)/urdf/turtlebot3_burger_for_autorace_custom.urdf.xacro" /> 
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_sdf" args="-urdf -model turtlebot3_burger -x 0 -y 0 -z 0 -Y 0 -param robot_description" />
   <!-- Arguments -->
   <arg name="model" default="burger" doc="model type [burger, waffle, waffle_pi]"/>
   <arg name="map_file" default="$(find example_package)/maps/my_map.yaml"/>
@@ -31,10 +31,14 @@
     <remap from="map" to="my_custom_map"/>
   </node> -->
 
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" 
+      args="0 0 0 0 0 0 map odom 100"/>
+
   <node pkg="tf" type="static_transform_publisher" name="base_scan_to_base_link" args="0 0 0 0 0 0 base_link base_scan 100"/>
 
   <!-- AMCL -->
-  <include file="$(find turtlebot3_navigation)/launch/amcl.launch"/>
+  <!-- <include file="$(find turtlebot3_navigation)/launch/amcl.launch"/> -->
+  
 
   <!-- move_base -->
   <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
@@ -43,7 +47,7 @@
   </include>
 
     <!-- Gmapping SLAM node -->
-  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" />
+  <!-- <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" /> -->
 
   <!-- rviz -->
   <group if="$(arg open_rviz)"> 
@@ -52,4 +56,14 @@
   </group>
 
   <node pkg="example_package" type="publish_goals" name="publish_goals" launch-prefix="xterm -e"/>
+
+<node pkg="example_package" type="ground_truth_publisher.py" name="ground_truth_publisher" launch-prefix="xterm -e"/>
+
+<node pkg="laser_scan_matcher" type="laser_scan_matcher_node" name="laser_scan_matcher">
+  <param name="publish_tf" value="false"/>
+
+</node>
+
+<node pkg="example_package" type="laser_scan_matcher_publisher.py" name="laser_scan_matcher_publisher" launch-prefix="xterm -e"/>
+  <!-- <node pkg="example_package" type="filter_node" name="filter_node" launch-prefix="xterm -e"/> -->
 </launch>
