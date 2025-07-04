@@ -4,7 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose2D, PoseStamped
 
 def pose2d_callback(msg):
-    pose_pub = rospy.Publisher('/laser_scan_matcher_pose', PoseStamped, queue_size=10)
+    pose_pub = rospy.Publisher('/laser_scan_matcher/pose_stamped_for_rviz', PoseStamped, queue_size=10)
     pose_stamped = PoseStamped()
     pose_stamped.header.stamp = rospy.Time.now()
     pose_stamped.header.frame_id = "odom"  # or "scanmatcher_odom" if you set a custom frame
