@@ -107,6 +107,7 @@ find_package(dynamic_reconfigure REQUIRED)
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
   cfg/KalmanFilterConfig.cfg
+  cfg/ExtendedKalmanFilterConfig.cfg
 )
 
 ###################################
@@ -223,9 +224,9 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#--- Filter Node ---#
+#--- Kalman Filter ---#
 add_executable(kalman_filter_node 
-  src/main.cpp 
+  src/kalman_main.cpp 
   src/filter_node.cpp 
   src/kalman_filter.cpp)
 
@@ -235,12 +236,33 @@ target_link_libraries(kalman_filter_node
   ${dynamic_reconfigure_LIBRARIES}
 )
 
+add_dependencies(kalman_filter_node ${PROJECT_NAME}_gencfg)
+
+
+#--- Extended Kalman Filter ---#
+add_executable(extended_kalman_filter_node 
+  src/extended_kalman_main.cpp 
+  src/filter_node.cpp 
+  src/extended_kalman_filter.cpp)
+
+add_dependencies(extended_kalman_filter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(extended_kalman_filter_node
+  ${catkin_LIBRARIES}
+  ${dynamic_reconfigure_LIBRARIES}
+)
+
+add_dependencies(extended_kalman_filter_node ${PROJECT_NAME}_gencfg)
+
+
+#--- Publish goals ---#
 add_executable(publish_goals src/publish_goals.cpp)
 add_dependencies(publish_goals ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(publish_goals ${catkin_LIBRARIES})
 
+
+#--- Noisy Odometry Publisher ---#
 add_executable(noisy_odometry_publisher src/noisy_odometry_publisher.cpp)
 add_dependencies(noisy_odometry_publisher ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(noisy_odometry_publisher ${catkin_LIBRARIES})
 
-add_dependencies(kalman_filter_node ${PROJECT_NAME}_gencfg)
+

@@ -121,10 +121,15 @@
         pkg="example_package"
         type="laser_scan_matcher_publisher.py"
         name="laser_scan_matcher_publisher"/>
-    <node
+    <!-- <node
         pkg="example_package"
         type="kalman_filter_node"
         name="kalman_filter_node"
+        launch-prefix="xterm -e"/> -->
+    <node
+        pkg="example_package"
+        type="extended_kalman_filter_node"
+        name="extended_kalman_filter_node"
         launch-prefix="xterm -e"/>
     <node
         pkg="example_package"

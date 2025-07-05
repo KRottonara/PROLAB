@@ -9,10 +9,14 @@ class KalmanFilter : public FilterNode
 {
 public:
     KalmanFilter(ros::NodeHandle &nh);
+    ~KalmanFilter();
 
 private:
     void prediction() override;
     void correction() override;
+    void convertSensorData(const nav_msgs::Odometry::ConstPtr &odom_msg,
+                           const sensor_msgs::Imu::ConstPtr &imu_msg,
+                           const geometry_msgs::PoseStamped::ConstPtr &laser_scan_msg) override;
     void reconfigCallback(example_package::KalmanFilterConfig &config, uint32_t level);
 
     // Kalman filter-specific members
@@ -38,6 +42,7 @@ private:
     Eigen::Vector3d _pred_mu_t1 = Eigen::Vector3d::Zero();
     Eigen::MatrixXd _Cov_t1 = Eigen::Matrix3d::Identity(3, 3);
     Eigen::MatrixXd _pred_Cov_t1 = Eigen::Matrix3d::Identity(3, 3);
+    Eigen::Vector3d _u_t1 = Eigen::Vector3d::Zero();
 
     dynamic_reconfigure::Server<example_package::KalmanFilterConfig> dr_srv_;
     dynamic_reconfigure::Server<example_package::KalmanFilterConfig>::CallbackType dr_cb_;

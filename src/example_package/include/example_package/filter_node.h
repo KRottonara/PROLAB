@@ -18,6 +18,7 @@ class FilterNode
 {
 public:
     FilterNode(ros::NodeHandle &nh);
+    virtual ~FilterNode() = default;
 
     virtual void prediction();
     virtual void correction();
@@ -39,10 +40,8 @@ protected:
     std::shared_ptr<message_filters::Synchronizer<MySyncPolicy>> sync_;
     ros::Publisher pred_pub_;
     ros::Publisher bel_pub_;
-    Eigen::Vector3d _u_t1 = Eigen::Vector3d::Zero();
     Eigen::Vector3d _z_t1 = Eigen::Vector3d::Zero();
-    ros::Time last_time_;
     ros::Time _time_t0;
     ros::Time _time_t1;
-    double dt = 0.0;
+    double _dt = 0.0;
 };

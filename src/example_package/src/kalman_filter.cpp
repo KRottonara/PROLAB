@@ -10,7 +10,9 @@ KalmanFilter::KalmanFilter(ros::NodeHandle &nh) : FilterNode(nh)
     dr_srv_.setCallback(dr_cb_);
 }
 
-void KalmanFilter::prediction()
+KalmanFilter::~KalmanFilter() = default;
+
+void KalmanFilter::prediction() 
 {
     geometry_msgs::PoseWithCovarianceStamped msg;
     msg.header.stamp = ros::Time::now();
@@ -19,11 +21,11 @@ void KalmanFilter::prediction()
     static bool first_run = true;
     if (first_run)
     {
-        dt = 0;
+        _dt = 0;
         first_run = false;
     }
 
-    _B = Eigen::Matrix3d::Identity(3, 3) * dt;
+    _B = Eigen::Matrix3d::Identity(3, 3) * _dt;
     _pred_mu_t1 = _A * _mu_t0 + _B * _u_t1;
     _pred_Cov_t1 = _A * _Cov_t0 * _A.transpose() + _R;
 
@@ -51,7 +53,7 @@ void KalmanFilter::prediction()
     correction();
 }
 
-void KalmanFilter::correction()
+void KalmanFilter::correction() 
 {
     _K = _pred_Cov_t1 * _C.transpose() * (_C * _pred_Cov_t1 * _C.transpose() + _Q).inverse();
     _mu_t1 = _pred_mu_t1 + _K * (_z_t1 - _C * _pred_mu_t1);
@@ -80,6 +82,26 @@ void KalmanFilter::correction()
     msg.pose.covariance[31] = _Cov_t1(2, 1); // yaw-y
 
     bel_pub_.publish(msg);
+}
+
+void KalmanFilter::convertSensorData(const nav_msgs::Odometry::ConstPtr &odom_msg,
+                                   const sensor_msgs::Imu::ConstPtr &imu_msg,
+                                   const geometry_msgs::PoseStamped::ConstPtr &laser_scan_msg) 
+{
+    static double odom_yaw = 0.0;
+    odom_yaw = tf2::getYaw(odom_msg->pose.pose.orientation);
+
+    _u_t1 = (odom_msg->twist.twist.linear.x * cos(odom_yaw) -
+             odom_msg->twist.twist.linear.y * sin(odom_yaw)) *
+                Eigen::Vector3d::UnitX() +
+            (odom_msg->twist.twist.linear.x * sin(odom_yaw) +
+             odom_msg->twist.twist.linear.y * cos(odom_yaw)) *
+                Eigen::Vector3d::UnitY() +
+            odom_msg->twist.twist.angular.z * Eigen::Vector3d::UnitZ();
+
+    _z_t1 = laser_scan_msg->pose.position.x * Eigen::Vector3d::UnitX() +
+            laser_scan_msg->pose.position.y * Eigen::Vector3d::UnitY() +
+            tf2::getYaw(laser_scan_msg->pose.orientation) * Eigen::Vector3d::UnitZ();
 }
 
 void KalmanFilter::reconfigCallback(example_package::KalmanFilterConfig &config, uint32_t level)

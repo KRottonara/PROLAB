@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "filter_node");
+    ros::init(argc, argv, "kalman_filter_node");
     ros::NodeHandle nh("~");
     KalmanFilter node(nh);
     ros::spin();

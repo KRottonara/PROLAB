@@ -14,12 +14,13 @@ FilterNode::FilterNode(ros::NodeHandle &nh)
     bel_pub_ = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/belief", 10);
 }
 
+
 void FilterNode::sensorCallback(const nav_msgs::Odometry::ConstPtr &odom_msg,
                                 const sensor_msgs::Imu::ConstPtr &imu_msg,
                                 const geometry_msgs::PoseStamped::ConstPtr &laser_scan_msg)
 {
     _time_t1 = odom_msg->header.stamp;
-    dt = (_time_t1 - _time_t0).toSec();
+    _dt = (_time_t1 - _time_t0).toSec();
     _time_t0 = _time_t1;
 
     convertSensorData(odom_msg, imu_msg, laser_scan_msg);
@@ -27,24 +28,8 @@ void FilterNode::sensorCallback(const nav_msgs::Odometry::ConstPtr &odom_msg,
 }
 
 void FilterNode::convertSensorData(const nav_msgs::Odometry::ConstPtr &odom_msg,
-                                   const sensor_msgs::Imu::ConstPtr &imu_msg,
-                                   const geometry_msgs::PoseStamped::ConstPtr &laser_scan_msg)
-{
-    static double odom_yaw = 0.0;
-    odom_yaw = tf2::getYaw(odom_msg->pose.pose.orientation);
-
-    _u_t1 = (odom_msg->twist.twist.linear.x * cos(odom_yaw) -
-             odom_msg->twist.twist.linear.y * sin(odom_yaw)) *
-                Eigen::Vector3d::UnitX() +
-            (odom_msg->twist.twist.linear.x * sin(odom_yaw) +
-             odom_msg->twist.twist.linear.y * cos(odom_yaw)) *
-                Eigen::Vector3d::UnitY() +
-            odom_msg->twist.twist.angular.z * Eigen::Vector3d::UnitZ();
-
-    _z_t1 = laser_scan_msg->pose.position.x * Eigen::Vector3d::UnitX() +
-            laser_scan_msg->pose.position.y * Eigen::Vector3d::UnitY() +
-            tf2::getYaw(laser_scan_msg->pose.orientation) * Eigen::Vector3d::UnitZ();
-}
+                           const sensor_msgs::Imu::ConstPtr &imu_msg,
+                           const geometry_msgs::PoseStamped::ConstPtr &laser_scan_msg){}
 
 void FilterNode::prediction() {}
 void FilterNode::correction() {}
