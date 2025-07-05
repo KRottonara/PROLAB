@@ -16,18 +16,18 @@
   <node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_key" launch-prefix="xterm -e"/>
 
   <!-- Map server node (publishes a static map) -->
-  <node pkg="map_server" type="map_server" name="map_server" args="$(find example_package)/maps/my_map.yaml" >
+  <!-- <node pkg="map_server" type="map_server" name="map_server" args="$(find example_package)/maps/my_map.yaml" >
     <remap from="map" to="my_custom_map"/>
-  </node>
+  </node> -->
 
-  <node pkg="tf" type="static_transform_publisher" name="base_scan_to_base_link" args="0 0 0 0 0 0 base_link base_scan 100"/>
+  <!-- <node pkg="tf" type="static_transform_publisher" name="base_scan_to_base_link" args="0 0 0 0 0 0 base_link base_scan 100"/> -->
 
   <!-- Gmapping SLAM node -->
-  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" />
+  <!-- <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" /> -->
 
 
-  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
+  <!-- <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
       <arg name="map_file" value="$(find example_package)/maps/my_map.yaml"/>
-  </include>
+  </include> -->
 
 </launch>

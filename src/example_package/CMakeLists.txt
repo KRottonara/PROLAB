@@ -24,9 +24,11 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   actionlib_msgs
   move_base_msgs
+  
 )
 
 find_package(Eigen3 REQUIRED)
+find_package(dynamic_reconfigure REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -103,10 +105,9 @@ find_package(Eigen3 REQUIRED)
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/KalmanFilterConfig.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -223,10 +224,23 @@ include_directories(
 # catkin_add_nosetests(test)
 
 #--- Filter Node ---#
-add_executable(filter_node src/filter_node.cpp)
-add_dependencies(filter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(filter_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(kalman_filter_node 
+  src/main.cpp 
+  src/filter_node.cpp 
+  src/kalman_filter.cpp)
+
+add_dependencies(kalman_filter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(kalman_filter_node
+  ${catkin_LIBRARIES}
+  ${dynamic_reconfigure_LIBRARIES}
+)
 
 add_executable(publish_goals src/publish_goals.cpp)
 add_dependencies(publish_goals ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(publish_goals ${catkin_LIBRARIES})
+
+add_executable(noisy_odometry_publisher src/noisy_odometry_publisher.cpp)
+add_dependencies(noisy_odometry_publisher ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(noisy_odometry_publisher ${catkin_LIBRARIES})
+
+add_dependencies(kalman_filter_node ${PROJECT_NAME}_gencfg)

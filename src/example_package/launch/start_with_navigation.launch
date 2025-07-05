@@ -123,7 +123,12 @@
         name="laser_scan_matcher_publisher"/>
     <node
         pkg="example_package"
-        type="filter_node"
-        name="filter_node"
+        type="kalman_filter_node"
+        name="kalman_filter_node"
         launch-prefix="xterm -e"/>
+    <node
+        pkg="example_package"
+        type="noisy_odometry_publisher"
+        name="noisy_odometry_publisher"
+        output="screen"/>
 </launch>
