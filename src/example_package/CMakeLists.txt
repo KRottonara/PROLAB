@@ -108,6 +108,7 @@ find_package(dynamic_reconfigure REQUIRED)
 generate_dynamic_reconfigure_options(
   cfg/KalmanFilterConfig.cfg
   cfg/ExtendedKalmanFilterConfig.cfg
+  cfg/ParticleFilterConfig.cfg
 )
 
 ###################################
@@ -252,6 +253,19 @@ target_link_libraries(extended_kalman_filter_node
 )
 
 add_dependencies(extended_kalman_filter_node ${PROJECT_NAME}_gencfg)
+
+
+#--- Particle Filter ---#
+add_executable(particle_filter_node 
+  src/particle_main.cpp
+  src/filter_node.cpp 
+  src/particle_filter.cpp)
+
+add_dependencies(particle_filter_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(particle_filter_node
+  ${catkin_LIBRARIES}
+  ${dynamic_reconfigure_LIBRARIES}
+)
 
 
 #--- Publish goals ---#

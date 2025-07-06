@@ -479,6 +479,14 @@ Visualization Manager:
       Topic: /real_odom
       Unreliable: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /particles
+      Name: MarkerArray
+      Namespaces:
+        particles: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
