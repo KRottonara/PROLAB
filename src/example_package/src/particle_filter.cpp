@@ -3,13 +3,14 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+#include <angles/angles.h>
 
 ParticleFilter::ParticleFilter(ros::NodeHandle &nh, size_t num_particles)
     : FilterNode(nh),
       num_particles_(num_particles),
       gen_(std::random_device{}()),
-      motion_noise_(0.0, 0.05), // Tune as needed
-      angle_noise_(0.0, 0.1)   // Tune as needed
+      motion_noise_(0.0, 0.2), // Tune as needed
+      angle_noise_(0.0, 0.3)   // Tune as needed
 {
     std::uniform_real_distribution<double> dist_xy(-2.0, 2.0);
     std::uniform_real_distribution<double> dist_theta(-M_PI, M_PI);
@@ -27,8 +28,8 @@ ParticleFilter::ParticleFilter(ros::NodeHandle &nh, size_t num_particles)
 
     dr_cb_ = boost::bind(&ParticleFilter::reconfigCallback, this, _1, _2);
     dr_srv_.setCallback(dr_cb_);
-    sigma_pos_ = 0.01; // Default values, match cfg
-    sigma_theta_ = 0.05;
+    sigma_pos_ = 0.0002; // Default values, match cfg
+    sigma_theta_ = 0.0003;
 }
 
 void ParticleFilter::convertSensorData(const nav_msgs::Odometry::ConstPtr &odom_msg,
@@ -62,6 +63,8 @@ void ParticleFilter::prediction()
         p.state(0) += v * _dt * std::cos(theta);
         p.state(1) += v * _dt * std::sin(theta);
         p.state(2) += w * _dt;
+
+        // Now theta is in [0, 2π)
 
         // // Clamp x and y to [-8, 8]
         // p.state(0) = std::max(-8.0, std::min(8.0, p.state(0)));
@@ -109,9 +112,15 @@ void ParticleFilter::correction()
         double dx = p.state(0) - _z_t1(0);
         double dy = p.state(1) - _z_t1(1);
         double dtheta = p.state(2) - _z_t1(2);
-        double total_error = std::sqrt(dx * dx + dy * dy + dtheta * dtheta);
+        double total_error = (dx * dx + dy * dy + dtheta * dtheta);
         p.weight = 1 / (total_error + 1e-12);
         weight_sum += p.weight;
+
+        // Does not work:
+        // double dtheta = angles::shortest_angular_distance(_z_t1(2), p.state(2));
+        // double pos_prob = std::exp(-(dx * dx + dy * dy) / (2 * sigma_pos_ * sigma_pos_));
+        // double theta_prob = std::exp(-(dtheta * dtheta) / (2 * sigma_theta_ * sigma_theta_));
+        // p.weight = pos_prob * theta_prob + 1e-12;
     }
     // Normalize weights
     for (auto &p : particles_)
