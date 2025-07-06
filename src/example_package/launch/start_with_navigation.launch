@@ -139,9 +139,10 @@
         name="particle_filter_node"
         launch-prefix="xterm -e"/> -->
 
+
+
     <!-- Uncomment the following nodes to run output in log files -->
-    <!-- 
-        <node
+        <!-- <node
         pkg="example_package"
         type="kalman_filter_node"
         name="kalman_filter_node"
