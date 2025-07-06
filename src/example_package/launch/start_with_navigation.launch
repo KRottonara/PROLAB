@@ -126,16 +126,16 @@
         type="kalman_filter_node"
         name="kalman_filter_node"
         launch-prefix="xterm -e"/> -->
-    <!-- <node
+    <node
         pkg="example_package"
         type="extended_kalman_filter_node"
         name="extended_kalman_filter_node"
-        launch-prefix="xterm -e"/> -->
-    <node
+        launch-prefix="xterm -e"/>
+    <!-- <node
         pkg="example_package"
         type="particle_filter_node"
         name="particle_filter_node"
-        launch-prefix="xterm -e"/>
+        launch-prefix="xterm -e"/> -->
     <node
         pkg="example_package"
         type="noisy_odometry_publisher"
