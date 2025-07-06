@@ -97,6 +97,13 @@ void ExtendedKalmanFilter::correction()
     msg.pose.covariance[31] = _Cov_t1(2, 1); // yaw-y
 
     bel_pub_.publish(msg);
+    
+    // Log the filter cycle time
+    static ros::Time last_time = ros::Time::now();
+    ros::Time current_time = ros::Time::now();
+    ros::Duration cycle_duration = current_time - last_time;
+    ROS_INFO_STREAM("Filter cycle time: " << cycle_duration.toSec() << " seconds");
+    last_time = current_time;
 }
 
 void ExtendedKalmanFilter::convertSensorData(const nav_msgs::Odometry::ConstPtr &odom_msg,

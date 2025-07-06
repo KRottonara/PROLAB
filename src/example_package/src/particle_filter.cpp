@@ -145,6 +145,13 @@ void ParticleFilter::correction()
     msg.pose.pose.orientation = tf2::toMsg(q);
     // Covariance can be estimated from particles if desired
     bel_pub_.publish(msg);
+
+    // Log the filter cycle time
+    static ros::Time last_time = ros::Time::now();
+    ros::Time current_time = ros::Time::now();
+    ros::Duration cycle_duration = current_time - last_time;
+    ROS_INFO_STREAM("Filter cycle time: " << cycle_duration.toSec() << " seconds");
+    last_time = current_time;
 }
 
 void ParticleFilter::resample()
@@ -181,3 +188,7 @@ void ParticleFilter::reconfigCallback(example_package::ParticleFilterConfig &con
     sigma_pos_ = config.sigma_pos;
     sigma_theta_ = config.sigma_theta;
 }
+
+
+
+

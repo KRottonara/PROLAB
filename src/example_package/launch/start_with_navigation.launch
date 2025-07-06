@@ -121,21 +121,44 @@
         pkg="example_package"
         type="laser_scan_matcher_publisher.py"
         name="laser_scan_matcher_publisher"/>
+
+    <!-- Uncomment the following nodes to run output in different Terminal -->
     <!-- <node
         pkg="example_package"
         type="kalman_filter_node"
         name="kalman_filter_node"
         launch-prefix="xterm -e"/> -->
-    <node
+    <!-- <node
         pkg="example_package"
         type="extended_kalman_filter_node"
         name="extended_kalman_filter_node"
-        launch-prefix="xterm -e"/>
+        launch-prefix="xterm -e"/> -->
     <!-- <node
         pkg="example_package"
         type="particle_filter_node"
         name="particle_filter_node"
         launch-prefix="xterm -e"/> -->
+
+    <!-- Uncomment the following nodes to run output in log files -->
+    <!-- 
+        <node
+        pkg="example_package"
+        type="kalman_filter_node"
+        name="kalman_filter_node"
+        output="log"/> -->
+    <!-- <node
+        pkg="example_package"
+        type="extended_kalman_filter_node"
+        name="extended_kalman_filter_node"
+        output="log"/> -->
+    <node
+        pkg="example_package"
+        type="particle_filter_node"
+        name="particle_filter_node"
+        output="log"/>
+
+
+    <!-- Node for simulating odometry noise since normal /odom comes from gound truth -->
     <node
         pkg="example_package"
         type="noisy_odometry_publisher"

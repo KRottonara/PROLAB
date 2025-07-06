@@ -19,11 +19,11 @@ lock = threading.Lock()
 def sync_callback(belief_msg, gt_msg):
     with lock:
         rospy.loginfo("Synchronized belief and ground truth messages received.")
-        # belief_data.append(quaternion_to_yaw(belief_msg.pose.pose.orientation))
-        # ground_truth_data.append(quaternion_to_yaw(gt_msg.pose.orientation))
+        belief_data.append(quaternion_to_yaw(belief_msg.pose.pose.orientation))
+        ground_truth_data.append(quaternion_to_yaw(gt_msg.pose.orientation))
 
-        belief_data.append((belief_msg.pose.pose.position.x))
-        ground_truth_data.append((gt_msg.pose.position.x))
+        # belief_data.append((belief_msg.pose.pose.position.y))
+        # ground_truth_data.append((gt_msg.pose.position.y))
 
         # Use the time of the synchronized messages
         timestamps.append(belief_msg.header.stamp.to_sec() if hasattr(belief_msg, 'header') else rospy.get_time())
